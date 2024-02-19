@@ -76,3 +76,10 @@ For direct testing and query execution on your PostgreSQL database, use the foll
 ```bash
 docker-compose exec postgres psql -U airflow -d airflow
 ```
+And then make queries on the data (the DAG saves more than just price + rating info! Explore based on your curiosities/preferences):
+```bash
+airflow=# SELECT * FROM airbnb_data LIMIT 0;
+ id | price | deeplink | rating | type | reviews_count | is_superhost | rarefind | city | first_image | date_pulled
+----+-------+----------+--------+------+---------------+--------------+----------+------+-------------+-------------
+``````
+
