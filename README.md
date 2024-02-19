@@ -66,7 +66,7 @@ query_params = {
 docker-compose up -d
 ```
 
-After completing these steps, you can access the application at [http://localhost](http://localhost) and [http://localhost:8080/dags/process-airbnb/grid](http://localhost:8080/dags/process-airbnb/grid) for the Airflow UI.
+After completing these steps, you can access the application at [http://localhost](http://localhost) and the Airflow UI at [http://localhost:8080/dags/process-airbnb/grid](http://localhost:8080/dags/process-airbnb/grid).
 
 ![Airflow UI Demo](./screenshots/airflow_demo.png)
 
