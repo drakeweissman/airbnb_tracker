@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Costa Rica Airbnb Tracker</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .header {
+            background-color: #005a9c;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        #chart_div {
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        @media (max-width: 600px) {
+            #chart_div {
+                width: 95%;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Airbnb Tracker</h1>
+    </div>
+    <div id="chart_div"></div>
+
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        async function fetchData() {
+            try {
+                // Update the endpoint to 'api/avg-price-ratings'
+                const response = await fetch('http://localhost:5000/api/avg-price-ratings');
+                const data = await response.json();
+                return data.map(item => ({
+                    date_pulled: new Date(item.date_pulled).toLocaleDateString('en-US'),
+                    avg_price: parseFloat(item.avg_price),
+                    avg_rating: parseFloat(item.avg_rating) // Assume this is the average rating
+                }));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return [];
+            }
+        }
+
+        async function drawChart() {
+            const data = await fetchData();
+            const dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', 'Date Pulled');
+            dataTable.addColumn('number', 'Average Price');
+            dataTable.addColumn('number', 'Average Rating'); // Add column for Average Rating
+
+            data.forEach(item => {
+                dataTable.addRow([item.date_pulled, Math.round(item.avg_price), item.avg_rating]); // Include rating data
+            });
+
+            var options = {
+                title: 'Airbnb Listing Price and Ratings Over Time',
+                curveType: 'function',
+                legend: { position: 'bottom' },
+                hAxis: {
+                    format: 'MMM d',
+                    gridlines: { count: 0 }
+                },
+                series: {
+                    0: {targetAxisIndex: 0}, // First series (Average Price) on the left y-axis
+                    1: {targetAxisIndex: 1}  // Second series (Average Rating) on the right y-axis
+                },
+                vAxes: {
+                    0: {
+                        title: 'Price',
+                        format: 'currency',
+                        viewWindow: {
+                            min: 2500 // Set minimum value for the first y-axis (Price)
+                        },
+                        gridlines: { count: 0 }
+                    },
+                    1: {
+                        title: 'Rating',
+                        format: 'decimal',
+                        viewWindow: {
+                            min: 4.4 // Set minimum value for the second y-axis (Rating)
+                        },
+                        gridlines: { count: 0 }
+                    }
+                },
+                chartArea: { width: '80%', height: '70%' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(dataTable, options);
+        }
+    </script>
+</body>
+</html>
