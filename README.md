@@ -63,6 +63,7 @@ query_params = {
 5. Start the application using Docker Compose. ([Docker](https://www.docker.com/get-started) required):
 
 ```bash
+cd airflow
 docker-compose up -d
 ```
 
